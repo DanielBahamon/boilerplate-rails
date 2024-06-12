@@ -1,0 +1,40 @@
+name: Test
+
+on:
+  workflow_call:
+
+jobs:
+  rspec:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16.3-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+    env:
+      RAILS_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '.tool-versions'
+          bundler-cache: true
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install --frozen-lockfile
+      - run: bin/rails db:prepare
+        env:
+          SETTINGS_SKIP_VALIDATION: true
+      - run: bin/rails spec:prepare
+        env:
+          SETTINGS_SKIP_VALIDATION: true
+      - run: bundle exec rspec
+        env:
+          SETTINGS_PAY_STRIPE_PUBLIC_KEY: ${{ secrets.SETTINGS_PAY_STRIPE_PUBLIC_KEY }}
+          SETTINGS_PAY_STRIPE_SECRET_KEY: ${{ secrets.SETTINGS_PAY_STRIPE_SECRET_KEY }}
+          SETTINGS_PAY_STRIPE_SUBSCRIPTION_PREMIUM: ${{ secrets.SETTINGS_PAY_STRIPE_SUBSCRIPTION_PREMIUM }}
+      - uses: codecov/codecov-action@v4
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

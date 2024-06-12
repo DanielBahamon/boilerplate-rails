@@ -1,0 +1,20 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: <%= Settings.database.host %>
+  port: <%= Settings.database.port %>
+  username: <%= Settings.database.username %>
+  password: <%= Settings.database.password %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  database: <%= "#{Settings.app.name}_development" %>
+
+test:
+  <<: *default
+  database: <%= "#{Settings.app.name}_test" %>
+
+production:
+  <<: *default
+  database: <%= "#{Settings.app.name}_production" %>

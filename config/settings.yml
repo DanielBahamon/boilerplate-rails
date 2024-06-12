@@ -1,0 +1,8 @@
+app:
+  name: rails_boilerplate
+  host: "https://rails-boilerplate.io"
+mail:
+  sender: noreply@rails-boilerplate.io
+  support: support@rails-boilerplate.io
+pay:
+  default_processor: stripe

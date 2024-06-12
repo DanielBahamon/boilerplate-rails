@@ -1,0 +1,24 @@
+!!!
+%html{ data: { theme: 'winter' } }
+  %head
+    %meta{ content: 'text/html; charset=UTF-8', 'http-equiv': 'Content-Type' }
+    %title
+      = content_for(:title) || page_title
+    %meta{ name: 'description', content: content_for(:description) || page_description }
+    %meta{ name: 'keywords', content: content_for(:keywords) || page_keywords }
+    %meta{ name: 'robots', content: content_for(:robots) || page_robots }
+    %meta{ content: 'width=device-width,initial-scale=1', name: 'viewport' }
+    %meta{ name: 'turbo-refresh-method', content: 'morph' }
+    = csrf_meta_tags
+    = csp_meta_tag
+    = stylesheet_link_tag 'application', 'data-turbo-track': 'reload'
+    = javascript_include_tag 'application', 'data-turbo-track': 'reload', defer: true
+  %body.flex.flex-col.min-h-screen.bg-base-100
+    = render_component(Layout::NavbarComponent)
+    .relative.grow
+      .absolute.toast.toast-end.toast-top#flash
+        - flash.each do |type, message|
+          = render_component(Layout::NotificationComponent, type:, message:)
+      = render_component(Common::ContainerComponent) do
+        = yield
+    = render_component(Layout::FooterComponent)

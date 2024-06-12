@@ -1,0 +1,45 @@
+{
+  "name": "app",
+  "private": "true",
+  "type": "module",
+  "scripts": {
+    "build": "bun bun.config.js",
+    "build:css": "tailwindcss -i ./app/assets/stylesheets/application.pcss -o ./app/assets/builds/application.css --minify",
+    "lint": "standard",
+    "lint:css": "stylelint app/assets/stylesheets"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "6.5.2",
+    "@hotwired/stimulus": "3.2.2",
+    "@hotwired/turbo-rails": "8.0.4",
+    "@tailwindcss/typography": "0.5.13",
+    "autoprefixer": "10.4.19",
+    "daisyui": "4.12.2",
+    "postcss": "8.4.38",
+    "tailwindcss": "3.4.4"
+  },
+  "devDependencies": {
+    "standard": "17.1.0",
+    "stylelint": "16.6.1",
+    "stylelint-config-standard-scss": "13.1.0"
+  },
+  "stylelint": {
+    "extends": "stylelint-config-standard-scss",
+    "rules": {
+      "import-notation": "string",
+      "comment-empty-line-before": "never",
+      "at-rule-no-unknown": null,
+      "scss/at-rule-no-unknown": [
+        true,
+        {
+          "ignoreAtRules": [
+            "tailwind"
+          ]
+        }
+      ]
+    },
+    "ignoreFiles": [
+      "!**/*.pcss"
+    ]
+  }
+}

@@ -1,0 +1,107 @@
+name: Lint
+
+on:
+  workflow_call:
+
+jobs:
+  bundle-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '.tool-versions'
+          bundler-cache: true
+      - run: bundle check
+  rubocop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '.tool-versions'
+          bundler-cache: true
+      - run: bundle exec rubocop
+  haml-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '.tool-versions'
+          bundler-cache: true
+      - run: bundle exec haml-lint
+  i18n-tasks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '.tool-versions'
+          bundler-cache: true
+      - run: bundle exec i18n-tasks health
+  brakeman:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '.tool-versions'
+          bundler-cache: true
+      - run: bundle exec brakeman
+  database_consistency:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16.3-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+    env:
+      RAILS_ENV: test
+      SETTINGS_SKIP_VALIDATION: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '.tool-versions'
+          bundler-cache: true
+      - run: bin/rails db:prepare
+      - run: bundle exec database_consistency
+  active_record_doctor:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16.3-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+    env:
+      RAILS_ENV: test
+      SETTINGS_SKIP_VALIDATION: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '.tool-versions'
+          bundler-cache: true
+      - run: bin/rails db:prepare
+      - run: bundle exec rails active_record_doctor
+  standardjs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
+  stylelint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - run: bun install --frozen-lockfile
+      - run: bun lint:css

@@ -1,0 +1,9 @@
+app:
+  host: "http://localhost:3000"
+database:
+  host: localhost
+  port: 5432
+  username: postgres
+  password: postgres
+redis:
+  url: redis://localhost:6379/1
